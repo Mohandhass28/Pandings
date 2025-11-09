@@ -35,7 +35,7 @@ class _MenuButtonState extends State<_MenuButton>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
     );
   }
 
@@ -46,7 +46,7 @@ class _MenuButtonState extends State<_MenuButton>
   }
 
   void _closeMenu() {
-    _animationController.reverse().then((_) {
+    _animationController.reverse(from: .3).then((_) {
       _overlayEntry?.remove();
       setState(() {
         _isMenuOpen = false;
@@ -87,17 +87,20 @@ class _MenuButtonState extends State<_MenuButton>
               ),
             ),
             Positioned(
-              top: position.dy + size.height - 10.h,
-              right: 15.w,
+              top: (position.dy + size.height),
+              right: 1.w,
               child: Material(
                 color: Colors.transparent,
-                child: ScaleTransition(
-                  alignment: Alignment.topRight,
-                  scale: _topScaleAnimation,
+                child: SizeTransition(
+                  // alignment: Alignment.topRight,
+                  // scale: _topScaleAnimation,
+                  sizeFactor: _topScaleAnimation,
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color.fromRGBO(29, 29, 29, 1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                      ),
                     ),
 
                     padding: const EdgeInsets.symmetric(vertical: 6),
