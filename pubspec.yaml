@@ -25,6 +25,9 @@ dependencies:
   google_fonts: ^6.3.2
   flutter_svg: ^2.2.2
   flutter_screenutil: ^5.9.3
+  currency_text_input_formatter: ^2.3.0
+  local_auth: ^3.0.0
+  app_settings: ^5.1.1
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +44,7 @@ flutter:
     - assets\svg\menu.svg
     - assets\svg\userIcon.svg
     - assets\svg\hugeicons_search.svg
+    - assets\svg\wallet.svg
 
     - assets\images\No internet.png
 

@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pendings/core/router/app_routes_config.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,10 +33,12 @@ class AuthController extends GetxController {
     required String password,
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      Get.offAllNamed(RouterName.ROOT);
+      return result;
     } catch (e) {
       print(e);
     }
@@ -74,7 +77,10 @@ class AuthController extends GetxController {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-      await _googleSignInInstance.signOut();
+      if (_googleSignInInstance.currentUser != null) {
+        await _googleSignInInstance.signOut();
+      }
+      Get.offAllNamed(RouterName.LOGIN);
     } catch (e) {
       print(e);
     }

@@ -43,7 +43,9 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButton: shopController.shopList.isNotEmpty
             ? FloatingActionButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(RouterName.CREATE_SHOP);
+                },
                 backgroundColor: Color.fromRGBO(228, 215, 255, 1),
                 child: Icon(Icons.add),
               )
@@ -89,16 +91,23 @@ class _HomePageState extends State<HomePage> {
           ),
           onPressed: () {},
         ),
+
         IconButton(
           padding: EdgeInsets.symmetric(horizontal: 14.w),
-          icon: SvgPicture.asset(
-            AppAssets.userIconSvg,
-            width: 40.w,
-            height: 40.h,
-          ),
-          onPressed: () {
-            auth.signOut();
-          },
+          icon: auth.user?.photoURL != null
+              ? ClipOval(
+                  child: Image.network(
+                    auth.user?.photoURL as String,
+                    width: 40.w,
+                    height: 40.h,
+                  ),
+                )
+              : SvgPicture.asset(
+                  AppAssets.userIconSvg,
+                  width: 40.w,
+                  height: 40.h,
+                ),
+          onPressed: () {},
         ),
       ],
     );
@@ -136,7 +145,9 @@ class _HomePageState extends State<HomePage> {
             height: 20.h,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed(RouterName.CREATE_SHOP);
+            },
             style: ButtonStyle(
               minimumSize: WidgetStatePropertyAll(
                 Size(MediaQuery.of(context).size.width, 55.h),
@@ -220,43 +231,26 @@ class ShopItem extends StatelessWidget {
                 ),
               ],
             ),
-            if (shop.userIcon == null)
-              Container(
-                width: 70.w,
-                height: 70.h,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(228, 215, 255, 1),
-                  borderRadius: BorderRadius.circular(200),
-                ),
-                child: Center(
-                  child: Text(
-                    shop.shopName.split("").first,
-                    style: AppTheme.albertFont(
-                      TextStyle(
-                        fontSize: 40.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromRGBO(78, 39, 153, 1),
-                      ),
+            Container(
+              width: 70.w,
+              height: 70.h,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(228, 215, 255, 1),
+                borderRadius: BorderRadius.circular(200),
+              ),
+              child: Center(
+                child: Text(
+                  shop.shopName.split("").first,
+                  style: AppTheme.albertFont(
+                    TextStyle(
+                      fontSize: 40.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(78, 39, 153, 1),
                     ),
                   ),
                 ),
               ),
-
-            if (shop.userIcon != null)
-              Container(
-                width: 70.w,
-                height: 70.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(200),
-                ),
-                child: Center(
-                  child: Image.network(
-                    shop.userIcon as String,
-                    width: 50.w,
-                    height: 50.w,
-                  ),
-                ),
-              ),
+            ),
           ],
         ),
       ),

@@ -50,8 +50,11 @@ class CreateAccountPage extends StatelessWidget {
                   height: 35.h,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    controller.loginWithGoogle();
+                  onTap: () async {
+                    final result = await controller.loginWithGoogle();
+                    if (result != null) {
+                      Get.offAllNamed(RouterName.ROOT);
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -171,11 +174,15 @@ class CreateAccountPage extends StatelessWidget {
                   height: 35.h,
                 ),
                 LoginContinueBtn(
-                  onTap: () {
-                    controller.createAccountEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
+                  onTap: () async {
+                    final result = await controller
+                        .createAccountEmailAndPassword(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
+                    if (result != null) {
+                      Get.offAllNamed(RouterName.ROOT);
+                    }
                   },
                 ),
                 SizedBox(

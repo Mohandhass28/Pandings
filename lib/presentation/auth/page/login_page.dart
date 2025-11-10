@@ -39,8 +39,11 @@ class LoginPage extends StatelessWidget {
                   height: 35.h,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    controller.loginWithGoogle();
+                  onTap: () async {
+                    final result = await controller.loginWithGoogle();
+                    if (result != null) {
+                      Get.offAllNamed(RouterName.ROOT);
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -160,11 +163,14 @@ class LoginPage extends StatelessWidget {
                   height: 35.h,
                 ),
                 LoginContinueBtn(
-                  onTap: () {
-                    controller.loginWithEmailAndPassword(
+                  onTap: () async {
+                    final result = await controller.loginWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text,
                     );
+                    if (result != null) {
+                      Get.offAllNamed(RouterName.ROOT);
+                    }
                   },
                 ),
                 SizedBox(

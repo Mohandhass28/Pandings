@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:pendings/core/asset/app_images.dart';
+import 'package:pendings/core/router/app_routes_config.dart';
+import 'package:pendings/core/theme/app_theme.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -12,6 +17,139 @@ class ShopPage extends StatelessWidget {
         actions: [
           _MenuButton(),
         ],
+        surfaceTintColor: Colors.white,
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 18.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 25.h,
+            ),
+            Row(
+              spacing: 14.w,
+              children: [
+                SvgPicture.asset(
+                  AppAssets.wallet,
+                  width: 30.w,
+                  height: 30.h,
+                ),
+                Text(
+                  "Total Pending",
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 8.h,
+            ),
+            Text(
+              "₹10000.00",
+              style: TextStyle(fontSize: 36.sp),
+            ),
+
+            SizedBox(
+              height: 40.h,
+            ),
+            Text(
+              "Loans",
+              style: TextStyle(fontSize: 14.sp),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            LoanWidgetItem(),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.toNamed(RouterName.CREATELOAN);
+        },
+        backgroundColor: Color.fromRGBO(228, 215, 255, 1),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class LoanWidgetItem extends StatelessWidget {
+  const LoanWidgetItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed(RouterName.LOAN_DETAILS);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 20.w,
+          vertical: 20.w,
+        ),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(150, 150, 150, 1),
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Name",
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+                SizedBox(
+                  height: 5.h,
+                ),
+                Text(
+                  "description",
+                  style: AppTheme.albertFont(
+                    TextStyle(
+                      fontSize: 14.sp,
+                      color: const Color.fromRGBO(0, 0, 0, .5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "12-11-2026/11:20",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10.sp,
+                  ),
+                ),
+                Text(
+                  "By: username",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10.sp,
+                  ),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                Text(
+                  "has to pay ₹10000",
+                  style: TextStyle(fontSize: 15.sp),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

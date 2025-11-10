@@ -9,5 +9,10 @@ class RouterName {
   static const String HOME = "/home";
   static const String CREATE_SHOP = "/create-shop";
   static const String SHOP = "/shop";
+  static const String ADDSTAFFS = "/add-staffs";
+  static const String LOAN_DETAILS = "/loan-details";
+  static const String PAY_LOAN = "/pay-loan";
+  static const String CREATELOAN = "/create-loan";
+  static const String CREATELOANAMOUNT = "/create-loan-amount";
   static const String VERIFY_EMAIL_LINK = "/verify-email-link";
 }

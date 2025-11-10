@@ -8,6 +8,7 @@ class AppAssets {
   static const String menuSvg = '${svgBasePath}menu.svg';
   static const String userIconSvg = '${svgBasePath}userIcon.svg';
   static const String search = '${svgBasePath}hugeicons_search.svg';
+  static const String wallet = '${svgBasePath}wallet.svg';
 
   static const String empty = '${imageBasePath}No internet.png';
 }
