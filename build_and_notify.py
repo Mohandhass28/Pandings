@@ -33,11 +33,11 @@ except subprocess.CalledProcessError as git_error:
     print(f"⚠️ Error pushing to GitHub: {git_error}")
 
 try:
-    # subprocess.run(
-    #     [FLUTTER_CMD, "build", "apk", "--release"],
-    #     cwd=PROJECT_PATH,
-    #     check=True,
-    # )
+    subprocess.run(
+        [FLUTTER_CMD, "build", "apk", "--release"],
+        cwd=PROJECT_PATH,
+        check=True,
+    )
     print("✅ Flutter build completed.")
 except subprocess.CalledProcessError as e:
     print("❌ Flutter build failed:", e)
