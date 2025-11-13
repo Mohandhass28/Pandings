@@ -34,12 +34,12 @@ except subprocess.CalledProcessError as git_error:
 
 try:
     subprocess.run(
-        [FLUTTER_CMD, "build", "clean"],
+        [FLUTTER_CMD, "clean"],
         cwd=PROJECT_PATH,
         check=True,
     )
     subprocess.run(
-        [FLUTTER_CMD, "build", "pub", "get"],
+        [FLUTTER_CMD, "pub", "get"],
         cwd=PROJECT_PATH,
         check=True,
     )
