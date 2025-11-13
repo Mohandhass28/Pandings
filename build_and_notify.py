@@ -34,6 +34,16 @@ except subprocess.CalledProcessError as git_error:
 
 try:
     subprocess.run(
+        [FLUTTER_CMD, "build", "clean"],
+        cwd=PROJECT_PATH,
+        check=True,
+    )
+    subprocess.run(
+        [FLUTTER_CMD, "build", "pub", "get"],
+        cwd=PROJECT_PATH,
+        check=True,
+    )
+    subprocess.run(
         [FLUTTER_CMD, "build", "apk", "--release"],
         cwd=PROJECT_PATH,
         check=True,
