@@ -20,8 +20,12 @@ FLUTTER_CMD = r'C:\Flutter\src\flutter\bin\flutter.bat'
 
 # Push code to GitHub before build
 
-# WANT_TO_PUSH = False
-WANT_TO_PUSH = True
+# WANT_TO_PUSH = True
+WANT_TO_PUSH = False
+
+# WANT_CLEAN_BUILD = True
+WANT_CLEAN_BUILD = False
+
 
 try:
     if WANT_TO_PUSH:
@@ -33,16 +37,21 @@ except subprocess.CalledProcessError as git_error:
     print(f"⚠️ Error pushing to GitHub: {git_error}")
 
 try:
-    subprocess.run(
-        [FLUTTER_CMD, "clean"],
-        cwd=PROJECT_PATH,
-        check=True,
-    )
-    subprocess.run(
-        [FLUTTER_CMD, "pub", "get"],
-        cwd=PROJECT_PATH,
-        check=True,
-    )
+    if WANT_CLEAN_BUILD:
+        subprocess.run(
+            [FLUTTER_CMD, "clean"],
+            cwd=PROJECT_PATH,
+            check=True,
+        )
+        print("✅ Build Clean successfully!")
+        
+        subprocess.run(
+            [FLUTTER_CMD, "pub", "get"],
+            cwd=PROJECT_PATH,
+            check=True,
+        )
+        print("✅ Build Dependencies Reslove successfully!")
+
     subprocess.run(
         [FLUTTER_CMD, "build", "apk", "--release"],
         cwd=PROJECT_PATH,
