@@ -2,155 +2,246 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_navigation/src/routes/circular_reveal_clipper.dart';
+import 'package:pendings/controller/auth_controller.dart';
 import 'package:pendings/core/asset/app_images.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/core/theme/app_theme.dart';
+import 'package:pendings/presentation/loan/model/loan_model.dart';
+import 'package:pendings/presentation/shop/controller/shop_controller.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("shop name"),
-        actions: [
-          _MenuButton(),
-        ],
-        surfaceTintColor: Colors.white,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 25.h,
-            ),
-            Row(
-              spacing: 14.w,
+    final shopController = Get.put(
+      ShopController(),
+    );
+    final shopId = Get.arguments["shopId"];
+    if (shopId == null) {
+      return Scaffold(
+        body: Center(
+          child: Text("Shop Id Not Found"),
+        ),
+      );
+    }
+    shopController.loadShop(shopId);
+    shopController.loadLoand(shopId);
+
+    return Obx(() {
+      if (shopController.shop.value == null) {
+        return Scaffold(
+          body: Center(
+            child: Text("Shop Not Found"),
+          ),
+        );
+      }
+
+      if (shopController.isLoading.value) {
+        return Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(shopController.shop.value!.shopName),
+          actions: [
+            _MenuButton(),
+          ],
+          surfaceTintColor: Colors.white,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(
-                  AppAssets.wallet,
-                  width: 30.w,
-                  height: 30.h,
+                SizedBox(
+                  height: 25.h,
+                ),
+                Row(
+                  spacing: 14.w,
+                  children: [
+                    SvgPicture.asset(
+                      AppAssets.wallet,
+                      width: 30.w,
+                      height: 30.h,
+                    ),
+                    Text(
+                      "Total Pending",
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 8.h,
                 ),
                 Text(
-                  "Total Pending",
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                  ),
+                  "₹ ${_getTotalPending().toString()}",
+                  style: TextStyle(fontSize: 36.sp),
                 ),
+
+                SizedBox(
+                  height: 40.h,
+                ),
+                Text(
+                  "Loans",
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                ..._getListLoan(),
               ],
             ),
-            SizedBox(
-              height: 8.h,
-            ),
-            Text(
-              "₹10000.00",
-              style: TextStyle(fontSize: 36.sp),
-            ),
-
-            SizedBox(
-              height: 40.h,
-            ),
-            Text(
-              "Loans",
-              style: TextStyle(fontSize: 14.sp),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            LoanWidgetItem(),
-          ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.toNamed(RouterName.CREATELOAN);
-        },
-        backgroundColor: Color.fromRGBO(228, 215, 255, 1),
-        child: Icon(Icons.add),
-      ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Get.toNamed(RouterName.CREATELOAN);
+          },
+          backgroundColor: Color.fromRGBO(228, 215, 255, 1),
+          child: Icon(Icons.add),
+        ),
+      );
+    });
+  }
+
+  List<Widget> _getListLoan() {
+    final ShopController shopController = Get.find<ShopController>();
+    return List.generate(
+      shopController.loanList.length,
+      (index) {
+        return LoanWidgetItem(
+          loan: shopController.loanList[index],
+        );
+      },
     );
+  }
+
+  double _getTotalPending() {
+    final ShopController shopController = Get.find<ShopController>();
+    return shopController.loanList
+        .map(
+          (element) => element.loanPendingAmount,
+        )
+        .fold(0.0, (sum, amount) => sum + amount);
   }
 }
 
 class LoanWidgetItem extends StatelessWidget {
-  const LoanWidgetItem({super.key});
+  const LoanWidgetItem({super.key, required this.loan});
+
+  final LoanModel loan;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Get.toNamed(RouterName.LOAN_DETAILS);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 20.w,
-          vertical: 20.w,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+
+      children: [
+        Text(
+          "Pending Amount: ₹${loan.loanPendingAmount}",
+          style: TextStyle(fontSize: 15.sp),
         ),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(150, 150, 150, 1),
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        InkWell(
+          onTap: () {
+            Get.toNamed(RouterName.LOAN_DETAILS, arguments: {"loan": loan});
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 20.h),
+
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+              vertical: 20.w,
+            ),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(55, 0, 0, 0),
+                  blurRadius: 20,
+                  offset: Offset(0, 10),
+                  spreadRadius: 4,
+                ),
+              ],
+              color: Color.fromRGBO(150, 150, 150, 1),
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  "Name",
-                  style: TextStyle(fontSize: 20.sp),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loan.name,
+                        style: TextStyle(fontSize: 20.sp),
+                      ),
+                      SizedBox(
+                        height: 5.h,
+                      ),
+                      Text(
+                        loan.description,
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTheme.albertFont(
+                          TextStyle(
+                            fontSize: 14.sp,
+                            color: const Color.fromARGB(200, 0, 0, 0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Text(
-                  "description",
-                  style: AppTheme.albertFont(
-                    TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color.fromRGBO(0, 0, 0, .5),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${loan.createAt.toDate().year}-${loan.createAt.toDate().month}-${loan.createAt.toDate().day} ${loan.createAt.toDate().hour}:${loan.createAt.toDate().minute}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                      ),
                     ),
-                  ),
+                    Text(
+                      "By: ${loan.byUserName}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.h,
+                    ),
+                    Text(
+                      "Loan Amount: ₹${loan.loanTotalAmount}",
+                      style: TextStyle(fontSize: 15.sp),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "12-11-2026/11:20",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.sp,
-                  ),
-                ),
-                Text(
-                  "By: username",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.sp,
-                  ),
-                ),
-                SizedBox(
-                  height: 15.h,
-                ),
-                Text(
-                  "has to pay ₹10000",
-                  style: TextStyle(fontSize: 15.sp),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+
+        Divider(),
+        SizedBox(
+          height: 5.h,
+        ),
+      ],
     );
   }
 }
@@ -213,6 +304,9 @@ class _MenuButtonState extends State<_MenuButton>
   }
 
   OverlayEntry _buildOverlay(Offset position, Size size) {
+    final ShopController shopController = Get.find<ShopController>();
+    final AuthController auth = Get.find<AuthController>();
+
     return OverlayEntry(
       builder: (context) => AnimatedBuilder(
         animation: _animationController,
@@ -230,8 +324,6 @@ class _MenuButtonState extends State<_MenuButton>
               child: Material(
                 color: Colors.transparent,
                 child: SizeTransition(
-                  // alignment: Alignment.topRight,
-                  // scale: _topScaleAnimation,
                   sizeFactor: _topScaleAnimation,
                   child: Container(
                     decoration: BoxDecoration(
@@ -246,18 +338,16 @@ class _MenuButtonState extends State<_MenuButton>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        _MenuItem(
-                          icon: Icons.person_add_alt_1,
-                          text: 'Add staffs',
-                          onTap: () {
-                            _closeMenu();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Add staffs clicked'),
-                              ),
-                            );
-                          },
-                        ),
+                        if (shopController.shop.value?.ownerId ==
+                            auth.firebaseUser.value?.uid)
+                          _MenuItem(
+                            icon: Icons.person_add_alt_1,
+                            text: 'staffs',
+                            onTap: () {
+                              _closeMenu();
+                              Get.toNamed(RouterName.SHOPSTAFF);
+                            },
+                          ),
                         _MenuItem(
                           icon: Icons.message,
                           text: 'Message',

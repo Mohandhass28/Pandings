@@ -9,6 +9,7 @@ import 'package:pendings/presentation/loan/page/pay_loan_page.dart';
 import 'package:pendings/presentation/shop/page/create_shop_page.dart';
 import 'package:pendings/presentation/home/page/home_page.dart';
 import 'package:pendings/presentation/shop/page/shop_page.dart';
+import 'package:pendings/presentation/shop/page/staffs_shop_page.dart';
 import 'package:pendings/presentation/staffs/page/add_staffs_page.dart';
 import 'package:pendings/root_page.dart';
 
@@ -45,6 +46,7 @@ class RouteManager {
     GetPage(
       name: RouterName.LOAN_DETAILS,
       page: () => LoanDetailsPage(),
+      binding: LoanBinding(),
     ),
     GetPage(
       name: RouterName.CREATE_ACCOUNT,
@@ -61,6 +63,10 @@ class RouteManager {
     GetPage(
       name: RouterName.CREATELOAN,
       page: () => CreateLoanPage(),
+    ),
+    GetPage(
+      name: RouterName.SHOPSTAFF,
+      page: () => StaffsShopPage(),
     ),
     GetPage(
       name: RouterName.ADDSTAFFS,

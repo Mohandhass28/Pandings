@@ -13,6 +13,7 @@ class RouterName {
   static const String LOAN_DETAILS = "/loan-details";
   static const String PAY_LOAN = "/pay-loan";
   static const String CREATELOAN = "/create-loan";
+  static const String SHOPSTAFF = "/shop-staff";
   static const String CREATELOANAMOUNT = "/create-loan-amount";
   static const String VERIFY_EMAIL_LINK = "/verify-email-link";
 }

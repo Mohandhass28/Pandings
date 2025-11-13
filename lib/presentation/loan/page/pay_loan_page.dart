@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pendings/presentation/loan/controller/loan_controller.dart';
+import 'package:pendings/presentation/loan/model/loan_model.dart';
+import 'package:pendings/presentation/loan/model/paid_model.dart';
 
 class PayLoanPage extends StatelessWidget {
   PayLoanPage({super.key});
@@ -11,6 +14,7 @@ class PayLoanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loan = Get.arguments?["loan"] as LoanModel?;
     final loanController = Get.put(LoanController());
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +31,7 @@ class PayLoanPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Name Paid",
+                  "${loan?.name} Paid",
                   style: TextStyle(fontSize: 22.sp),
                 ),
                 Row(
@@ -102,7 +106,32 @@ class PayLoanPage extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () async {
                 final isAuthenticated = await loanController.authenticateUser();
-                if (isAuthenticated) {}
+                if (isAuthenticated && loan != null) {
+                  if (_calculatePendingAmount(loan.loanTotalAmount) -
+                          double.parse(_controller.text) <
+                      0) {
+                    Get.snackbar(
+                      "Invalid Amount",
+                      "Enter Valid Amount",
+                      snackPosition: SnackPosition.BOTTOM,
+                      duration: Duration(seconds: 2),
+                    );
+                    return;
+                  }
+                  final paidModel = PaidModel(
+                    amount: double.parse(_controller.text),
+                    paidAt: Timestamp.now(),
+                  );
+                  await loanController.payLoad(loan.shopId, loan.id, paidModel);
+                  await loanController.updatePendingAmount(
+                    loan.shopId,
+                    loan.id,
+                    _calculatePendingAmount(loan.loanTotalAmount) -
+                        double.parse(_controller.text),
+                  );
+
+                  Get.back();
+                }
               },
               style: ButtonStyle(
                 minimumSize: WidgetStatePropertyAll(
@@ -130,5 +159,18 @@ class PayLoanPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  double _calculatePendingAmount(double loanTotalAmount) {
+    final loanController = Get.find<LoanController>();
+    return loanTotalAmount -
+        loanController.paidList
+            .map(
+              (element) => element.amount,
+            )
+            .fold(
+              0,
+              (previousValue, element) => previousValue + element,
+            );
   }
 }

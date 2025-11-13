@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pendings/presentation/loan/controller/loan_controller.dart';
+import 'package:pendings/presentation/loan/model/loan_model.dart';
+import 'package:pendings/presentation/shop/controller/shop_controller.dart';
 
 class CreateLoanAmount extends StatelessWidget {
   CreateLoanAmount({super.key});
@@ -11,6 +13,8 @@ class CreateLoanAmount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loanController = Get.put(LoanController());
+    final shopcontroller = Get.find<ShopController>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,7 +60,6 @@ class CreateLoanAmount extends StatelessWidget {
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
-
                             autofocus: true,
                             textAlign: TextAlign.center,
                             showCursor: true,
@@ -101,7 +104,19 @@ class CreateLoanAmount extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () async {
                 final isAuthenticated = await loanController.authenticateUser();
-                if (isAuthenticated) {}
+                if (isAuthenticated) {
+                  await loanController.addLocalLoan(
+                    loanController.localLoan.value!.copyWith(
+                      loanPendingAmount: double.tryParse(_controller.text),
+                      loanTotalAmount: double.tryParse(_controller.text),
+                    ),
+                  );
+                  if (loanController.localLoan.value != null) {
+                    loanController.createLoan(
+                      shopcontroller.shop.value!.id,
+                    );
+                  }
+                }
               },
               style: ButtonStyle(
                 minimumSize: WidgetStatePropertyAll(
@@ -122,7 +137,6 @@ class CreateLoanAmount extends StatelessWidget {
               ),
             ),
           ),
-
           SizedBox(
             height: 20.h,
           ),

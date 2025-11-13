@@ -1,9 +1,11 @@
 // ignore_for_file: body_might_complete_normally_nullable, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
+import 'package:pendings/firebase/firebase_db.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -47,12 +49,23 @@ class AuthController extends GetxController {
   Future<UserCredential?> createAccountEmailAndPassword({
     required String email,
     required String password,
+    required String userName,
   }) async {
     try {
-      return await _auth.createUserWithEmailAndPassword(
+      final result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Save user data in Firestore
+      await db.collection('users').doc(result.user!.uid).set({
+        'uid': result.user!.uid,
+        "name": userName,
+        'email': email,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      return result;
     } catch (e) {
       print(e);
     }
@@ -63,12 +76,26 @@ class AuthController extends GetxController {
       final userCred = await _googleSignInInstance.signIn();
       final googleAuth = await userCred?.authentication;
 
-      final crde = GoogleAuthProvider.credential(
+      final cred = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      return await _auth.signInWithCredential(crde);
+      final result = await _auth.signInWithCredential(cred);
+
+      // Store or update user info
+      final user = result.user;
+      if (user != null) {
+        await db.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'email': user.email,
+          'name': user.displayName,
+          'photoUrl': user.photoURL,
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+
+      return result;
     } catch (e) {
       print(e);
     }
@@ -84,5 +111,11 @@ class AuthController extends GetxController {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> getAllUser() async {
+    final usersSnapshot = await db.collection('users').get();
+
+    final users = usersSnapshot.docs.map((doc) => doc.data()).toList();
   }
 }
