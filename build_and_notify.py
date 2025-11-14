@@ -24,11 +24,14 @@ WANT_TO_PUSH = True
 # WANT_CLEAN_BUILD = True
 WANT_CLEAN_BUILD = False
 
+WANT_BUILD = True
+# WANT_BUILD = False
+
 WANT_ENTER_COMMIT_MESSAGE = True
 # WANT_ENTER_COMMIT_MESSAGE = False
 
-# WANT_SEND_TO_WHATSAPP = True
-WANT_SEND_TO_WHATSAPP = False
+WANT_SEND_TO_WHATSAPP = True
+# WANT_SEND_TO_WHATSAPP = False
 
 commitMessage = "Automated commit before APK build"
 
@@ -58,7 +61,7 @@ try:
             check=True,
         )
         print("✅ Build Dependencies Reslove successfully!")
-
+    if(WANT_BUILD):
         subprocess.run(
             [FLUTTER_CMD, "build", "apk", "--release"],
             cwd=PROJECT_PATH,

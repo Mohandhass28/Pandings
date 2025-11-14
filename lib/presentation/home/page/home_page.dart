@@ -94,6 +94,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             if (showIcon)
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showIcon = false;
+                      _animatedController.reverse();
+                    });
+                  },
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            if (showIcon)
               Positioned(
                 child: SizeTransition(
                   sizeFactor: _iconAnimation,
@@ -154,18 +166,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                ),
-              ),
-            if (showIcon)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showIcon = false;
-                      _animatedController.reverse();
-                    });
-                  },
-                  child: Container(color: Colors.transparent),
                 ),
               ),
           ],
