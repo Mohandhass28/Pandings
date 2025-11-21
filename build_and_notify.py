@@ -21,8 +21,8 @@ FLUTTER_CMD = r'C:\Flutter\src\flutter\bin\flutter.bat'
 WANT_TO_PUSH = True
 # WANT_TO_PUSH = False
 
-# WANT_CLEAN_BUILD = True
-WANT_CLEAN_BUILD = False
+WANT_CLEAN_BUILD = True
+# WANT_CLEAN_BUILD = False
 
 WANT_BUILD = True
 # WANT_BUILD = False

@@ -3,16 +3,32 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum PaymentType { online, cheque, cash }
+
+enum PaidType {
+  credit,
+  debit,
+}
+
 class PaidModel {
   final double amount;
   final Timestamp paidAt;
+  final PaymentType paymentType;
+  final PaidType paidType;
 
-  PaidModel({required this.amount, required this.paidAt});
+  PaidModel({
+    required this.amount,
+    required this.paidAt,
+    required this.paymentType,
+    required this.paidType,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'amount': amount,
       'paidAt': paidAt,
+      'paymentType': paymentType.name,
+      'paidType': paidType.name,
     };
   }
 
@@ -20,6 +36,14 @@ class PaidModel {
     return PaidModel(
       amount: map['amount'] as double,
       paidAt: map['paidAt'],
+      paymentType: map['paymentType'] == PaymentType.cash.name
+          ? PaymentType.cash
+          : map['paymentType'] == PaymentType.online.name
+          ? PaymentType.online
+          : PaymentType.cheque,
+      paidType: map['paidType'] == PaidType.credit.name
+          ? PaidType.credit
+          : PaidType.debit,
     );
   }
 

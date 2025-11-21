@@ -105,16 +105,27 @@ class CreateLoanAmount extends StatelessWidget {
               onPressed: () async {
                 final isAuthenticated = await loanController.authenticateUser();
                 if (isAuthenticated) {
-                  await loanController.addLocalLoan(
-                    loanController.localLoan.value!.copyWith(
-                      loanPendingAmount: double.tryParse(_controller.text),
-                      loanTotalAmount: double.tryParse(_controller.text),
-                    ),
-                  );
-                  if (loanController.localLoan.value != null) {
-                    loanController.createLoan(
-                      shopcontroller.shop.value!.id,
-                    );
+                  // await loanController.addLocalLoan(
+                  //   loanController.localLoan.value!.copyWith(
+                  //     loanPendingAmount: double.tryParse(_controller.text),
+                  //     loanTotalAmount: double.tryParse(_controller.text),
+                  //   ),
+                  // );
+                  // if (loanController.localLoan.value != null) {
+                  //   loanController.createLoan(
+                  //     shopcontroller.shop.value!.id,
+                  //   );
+                  // }
+
+                  String type = Get.arguments["type"];
+                  if (type == "amount") {
+                    loanController.goodOrAmount(_controller.text);
+                    Get.back();
+                    return;
+                  } else {
+                    loanController.balanceAmount(_controller.text);
+                    Get.back();
+                    return;
                   }
                 }
               },

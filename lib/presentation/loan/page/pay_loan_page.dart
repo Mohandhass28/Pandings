@@ -3,14 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:pendings/core/theme/app_color.dart';
 import 'package:pendings/presentation/loan/controller/loan_controller.dart';
 import 'package:pendings/presentation/loan/model/loan_model.dart';
 import 'package:pendings/presentation/loan/model/paid_model.dart';
 
-class PayLoanPage extends StatelessWidget {
+class PayLoanPage extends StatefulWidget {
   PayLoanPage({super.key});
 
+  @override
+  State<PayLoanPage> createState() => _PayLoanPageState();
+}
+
+class _PayLoanPageState extends State<PayLoanPage> {
   final TextEditingController _controller = TextEditingController();
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +37,153 @@ class PayLoanPage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          SizedBox(
+            height: 20.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {
+                  _currentIndex = 0;
+                  setState(() {});
+                },
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 100.w),
+                  width: 100.w,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: _currentIndex == 0
+                          ? AppColor.secoundaryColor
+                          : Colors.black,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.payments,
+                        color: _currentIndex == 0
+                            ? AppColor.secoundaryColor
+                            : Colors.black,
+                        size: 30,
+                      ),
+                      Text(
+                        "Cash",
+                        style: TextStyle(
+                          color: _currentIndex == 0
+                              ? AppColor.secoundaryColor
+                              : Colors.black,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  _currentIndex = 1;
+                  setState(() {});
+                },
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 100.w),
+                  width: 100.w,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: _currentIndex == 1
+                          ? AppColor.secoundaryColor
+                          : Colors.black,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.receipt,
+                        color: _currentIndex == 1
+                            ? AppColor.secoundaryColor
+                            : Colors.black,
+                        size: 30,
+                      ),
+                      Text(
+                        "Cheque",
+                        style: TextStyle(
+                          color: _currentIndex == 1
+                              ? AppColor.secoundaryColor
+                              : Colors.black,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  _currentIndex = 2;
+                  setState(() {});
+                },
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 100.w),
+                  width: 100.w,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: _currentIndex == 2
+                          ? AppColor.secoundaryColor
+                          : Colors.black,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.computer,
+                        color: _currentIndex == 2
+                            ? AppColor.secoundaryColor
+                            : Colors.black,
+                        size: 30,
+                      ),
+                      Text(
+                        "Online",
+                        style: TextStyle(
+                          color: _currentIndex == 2
+                              ? AppColor.secoundaryColor
+                              : Colors.black,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 70.h,
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${loan?.name} Paid",
+                  "${loan?.partyName} Pay",
                   style: TextStyle(fontSize: 22.sp),
                 ),
                 Row(
@@ -121,6 +273,12 @@ class PayLoanPage extends StatelessWidget {
                   final paidModel = PaidModel(
                     amount: double.parse(_controller.text),
                     paidAt: Timestamp.now(),
+                    paidType: PaidType.credit,
+                    paymentType: _currentIndex == 0
+                        ? PaymentType.cash
+                        : _currentIndex == 2
+                        ? PaymentType.cheque
+                        : PaymentType.online,
                   );
                   await loanController.payLoad(loan.shopId, loan.id, paidModel);
                   await loanController.updatePendingAmount(

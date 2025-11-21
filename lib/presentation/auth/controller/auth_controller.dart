@@ -1,7 +1,10 @@
 // ignore_for_file: body_might_complete_normally_nullable, avoid_print
 
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
@@ -10,6 +13,8 @@ import 'package:pendings/firebase/firebase_db.dart';
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignInInstance = GoogleSignIn();
+
+  final RxString error = "".obs;
 
   final Rx<User?> _fireBaseUser = Rx<User?>(null);
 
@@ -39,10 +44,19 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
+      error.value = ""; // Clear error on success
       Get.offAllNamed(RouterName.ROOT);
       return result;
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        error('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        error('Wrong password provided for that user.');
+      } else {
+        error('${e.message}');
+      }
+    } catch (error) {
+      log("$error");
     }
   }
 
@@ -65,9 +79,21 @@ class AuthController extends GetxController {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      error.value = ""; // Clear error on success
+      Get.offAllNamed(RouterName.ROOT); // Navigate on success
       return result;
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        error('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        error('The account already exists for that email.');
+      } else if (e.code == 'invalid-email') {
+        error('The email address is badly formatted.');
+      } else {
+        error('${e.message}');
+      }
+    } catch (error) {
+      log("$error");
     }
   }
 
@@ -96,8 +122,16 @@ class AuthController extends GetxController {
       }
 
       return result;
-    } catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        error('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        error('Wrong password provided for that user.');
+      } else {
+        error('${e.message}');
+      }
+    } catch (error) {
+      log("$error");
     }
   }
 

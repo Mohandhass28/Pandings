@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/core/asset/app_images.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/core/theme/app_theme.dart';

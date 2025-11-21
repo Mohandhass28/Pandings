@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/core/asset/app_images.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/presentation/auth/widgets/login_continue_btn/login_continue_btn.dart';
@@ -124,54 +124,61 @@ class LoginPage extends StatelessWidget {
                   SizedBox(
                     height: 15.h,
                   ),
-                  TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      hintText: "Enter password",
-                      hintStyle: TextStyle(
-                        color: Color.fromRGBO(157, 157, 157, 1),
-                        fontSize: 14.sp,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(0, 0, 0, 1),
+                  Obx(
+                    () => TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        error: controller.error.value.isNotEmpty
+                            ? Text(
+                                controller.error.value,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12.sp,
+                                ),
+                              )
+                            : null,
+                        hintText: "Enter password",
+                        hintStyle: TextStyle(
+                          color: Color.fromRGBO(157, 157, 157, 1),
+                          fontSize: 14.sp,
                         ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(55, 52, 52, 0.22),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(55, 52, 52, 0.22),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(55, 52, 52, 0.22),
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(55, 52, 52, 0.22),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(55, 52, 52, 0.22),
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-
-                        borderRadius: BorderRadius.circular(12.r),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromRGBO(55, 52, 52, 0.22),
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
+                      obscureText: true,
                     ),
-                    obscureText: true,
                   ),
                   SizedBox(
                     height: 35.h,
                   ),
                   LoginContinueBtn(
                     onTap: () async {
-                      final result = await controller.loginWithEmailAndPassword(
+                      await controller.loginWithEmailAndPassword(
                         email: emailController.text,
                         password: passwordController.text,
                       );
-                      if (result != null) {
-                        Get.offAllNamed(RouterName.ROOT);
-                      }
                     },
                   ),
                   SizedBox(
@@ -240,6 +247,7 @@ class LoginPage extends StatelessWidget {
                           text: "Sign up",
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
+                              controller.error("");
                               Get.offAllNamed(RouterName.CREATE_ACCOUNT);
                             },
                           style: TextStyle(

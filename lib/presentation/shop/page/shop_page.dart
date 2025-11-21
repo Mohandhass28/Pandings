@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/routes/circular_reveal_clipper.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/core/theme/app_color.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/core/asset/app_images.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/core/theme/app_theme.dart';
@@ -91,7 +95,7 @@ class ShopPage extends StatelessWidget {
                   height: 40.h,
                 ),
                 Text(
-                  "Loans",
+                  "Transitions",
                   style: TextStyle(fontSize: 14.sp),
                 ),
                 SizedBox(
@@ -118,7 +122,7 @@ class ShopPage extends StatelessWidget {
     return List.generate(
       shopController.loanList.length,
       (index) {
-        return LoanWidgetItem(
+        return TransitionsItem(
           loan: shopController.loanList[index],
         );
       },
@@ -135,8 +139,8 @@ class ShopPage extends StatelessWidget {
   }
 }
 
-class LoanWidgetItem extends StatelessWidget {
-  const LoanWidgetItem({super.key, required this.loan});
+class TransitionsItem extends StatelessWidget {
+  const TransitionsItem({super.key, required this.loan});
 
   final LoanModel loan;
 
@@ -147,16 +151,12 @@ class LoanWidgetItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
 
       children: [
-        Text(
-          "Pending Amount: ₹${loan.loanPendingAmount}",
-          style: TextStyle(fontSize: 15.sp),
-        ),
         InkWell(
           onTap: () {
             Get.toNamed(RouterName.LOAN_DETAILS, arguments: {"loan": loan});
           },
           child: Container(
-            margin: EdgeInsets.only(bottom: 20.h),
+            margin: EdgeInsets.only(bottom: 10.h),
 
             padding: EdgeInsets.symmetric(
               horizontal: 20.w,
@@ -165,13 +165,12 @@ class LoanWidgetItem extends StatelessWidget {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: const Color.fromARGB(55, 0, 0, 0),
-                  blurRadius: 20,
-                  offset: Offset(0, 10),
-                  spreadRadius: 4,
+                  color: AppColor.secoundaryColor.withOpacity(.3),
+                  blurRadius: 6,
+                  offset: Offset(5, 5),
                 ),
               ],
-              color: Color.fromRGBO(150, 150, 150, 1),
+              color: AppColor.primaryColor,
               borderRadius: BorderRadius.circular(14.r),
             ),
             child: Row(
@@ -184,14 +183,21 @@ class LoanWidgetItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        loan.name,
+                        loan.type.name.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: AppColor.secoundaryColor,
+                        ),
+                      ),
+                      Text(
+                        loan.partyName,
                         style: TextStyle(fontSize: 20.sp),
                       ),
                       SizedBox(
                         height: 5.h,
                       ),
                       Text(
-                        loan.description,
+                        loan.narration,
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -212,14 +218,14 @@ class LoanWidgetItem extends StatelessWidget {
                     Text(
                       "${loan.createAt.toDate().year}-${loan.createAt.toDate().month}-${loan.createAt.toDate().day} ${loan.createAt.toDate().hour}:${loan.createAt.toDate().minute}",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColor.secoundaryColor,
                         fontSize: 10.sp,
                       ),
                     ),
                     Text(
                       "By: ${loan.byUserName}",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColor.secoundaryColor,
                         fontSize: 10.sp,
                       ),
                     ),
@@ -227,7 +233,11 @@ class LoanWidgetItem extends StatelessWidget {
                       height: 15.h,
                     ),
                     Text(
-                      "Loan Amount: ₹${loan.loanTotalAmount}",
+                      "Balance: ₹${loan.loanPendingAmount}",
+                      style: TextStyle(fontSize: 15.sp),
+                    ),
+                    Text(
+                      "Goods Amount: ₹${loan.loanTotalAmount}",
                       style: TextStyle(fontSize: 15.sp),
                     ),
                   ],
@@ -237,7 +247,6 @@ class LoanWidgetItem extends StatelessWidget {
           ),
         ),
 
-        Divider(),
         SizedBox(
           height: 5.h,
         ),
@@ -430,4 +439,51 @@ class _MenuItem extends StatelessWidget {
       ),
     );
   }
+}
+
+class InnerShadowPainter extends CustomPainter {
+  final Color shadowColor;
+  final double blur;
+  final Offset offset;
+  final double borderRadius;
+
+  InnerShadowPainter({
+    required this.shadowColor,
+    required this.blur,
+    required this.offset,
+    required this.borderRadius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Offset.zero & size;
+    final Paint paint = Paint()..color = Colors.transparent;
+
+    final Path outerPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(borderRadius)))
+      ..close();
+
+    canvas.saveLayer(rect, paint);
+
+    canvas.drawPath(outerPath, paint);
+
+    final Paint shadowPaint = Paint()
+      ..blendMode = BlendMode.srcATop
+      ..imageFilter = ImageFilter.blur(sigmaX: blur, sigmaY: blur)
+      ..color = shadowColor;
+
+    final Path shadowPath = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          rect.shift(offset * -1),
+          Radius.circular(borderRadius),
+        ),
+      );
+
+    canvas.drawPath(shadowPath, shadowPaint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

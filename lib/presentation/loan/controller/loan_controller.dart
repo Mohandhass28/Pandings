@@ -1,15 +1,15 @@
-import 'dart:ffi';
+import 'dart:developer';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/firebase/firebase_db.dart';
 import 'package:pendings/firebase/shop/index.dart';
 import 'package:pendings/presentation/loan/model/loan_model.dart';
 import 'package:pendings/presentation/loan/model/paid_model.dart';
+import 'package:pendings/presentation/shop/controller/shop_controller.dart';
 
 class LoanController extends GetxController {
   final LocalAuthentication localAuth = LocalAuthentication();
@@ -17,6 +17,9 @@ class LoanController extends GetxController {
   final RxBool isLoading = RxBool(false);
   final Rx<LoanModel?> loan = Rx<LoanModel?>(null);
   final RxList<PaidModel> paidList = RxList<PaidModel>();
+
+  final RxString balanceAmount = "".obs;
+  final RxString goodOrAmount = "".obs;
 
   @override
   void onInit() {
@@ -34,7 +37,7 @@ class LoanController extends GetxController {
         },
       );
     } catch (e) {
-      debugPrint("$e");
+      log("$e");
     }
   }
 
@@ -163,6 +166,16 @@ class LoanController extends GetxController {
       debugPrint("Loan pending amount updated successfully");
     } catch (e) {
       debugPrint("Error updating loan pending amount: $e");
+    }
+  }
+
+  Future<void> create() async {
+    final shopcontroller = Get.find<ShopController>();
+
+    if (localLoan.value != null) {
+      createLoan(
+        shopcontroller.shop.value!.id,
+      );
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/firebase/firebase_db.dart';
 import 'package:pendings/firebase/shop/index.dart';

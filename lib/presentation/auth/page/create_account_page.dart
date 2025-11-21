@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/core/asset/app_images.dart';
 import 'package:pendings/core/router/app_routes_config.dart';
 import 'package:pendings/presentation/auth/widgets/login_continue_btn/login_continue_btn.dart';
@@ -210,21 +210,30 @@ class CreateAccountPage extends StatelessWidget {
                     ),
                     obscureText: true,
                   ),
-
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  Obx(
+                    () => controller.error.value.isNotEmpty
+                        ? Text(
+                            controller.error.value,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          )
+                        : SizedBox(),
+                  ),
                   SizedBox(
                     height: 35.h,
                   ),
                   LoginContinueBtn(
                     onTap: () async {
-                      final result = await controller
-                          .createAccountEmailAndPassword(
-                            email: emailController.text,
-                            password: passwordController.text,
-                            userName: userController.text,
-                          );
-                      if (result != null) {
-                        Get.offAllNamed(RouterName.ROOT);
-                      }
+                      await controller.createAccountEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        userName: userController.text,
+                      );
                     },
                   ),
                   SizedBox(
@@ -293,6 +302,8 @@ class CreateAccountPage extends StatelessWidget {
                           text: "Sign up",
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
+                              controller.error("");
+
                               Get.offAllNamed(RouterName.LOGIN);
                             },
                           style: TextStyle(

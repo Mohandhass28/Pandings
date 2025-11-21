@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pendings/controller/auth_controller.dart';
+import 'package:pendings/presentation/auth/controller/auth_controller.dart';
 import 'package:pendings/presentation/auth/page/login_page.dart';
 import 'package:pendings/presentation/home/page/home_page.dart';
 
