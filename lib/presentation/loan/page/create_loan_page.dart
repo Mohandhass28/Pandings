@@ -9,6 +9,7 @@ import 'package:pendings/core/widgets/E_blackButtons/black_button.dart';
 import 'package:pendings/core/widgets/textFieldWidget/text_field_widget.dart';
 import 'package:pendings/presentation/loan/controller/loan_controller.dart';
 import 'package:pendings/presentation/loan/model/loan_model.dart';
+import 'package:pendings/presentation/loan/model/paid_model.dart';
 import 'package:pendings/presentation/shop/controller/shop_controller.dart';
 import 'package:uuid/uuid.dart';
 
@@ -415,6 +416,17 @@ class CashWiget extends StatelessWidget {
                     );
                     await loanController.addLocalLoan(loan);
                     await loanController.create();
+                    final paidModel = PaidModel(
+                      amount: double.parse(loanController.goodOrAmount.value),
+                      paidAt: Timestamp.now(),
+                      paidType: PaidType.debit,
+                      paymentType: PaymentType.cash,
+                    );
+                    await loanController.payLoad(
+                      loan.shopId,
+                      loan.id,
+                      paidModel,
+                    );
                     Get.toNamed(RouterName.SHOP);
                   }
                 }

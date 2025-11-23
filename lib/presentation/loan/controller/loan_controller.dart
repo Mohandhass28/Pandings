@@ -47,11 +47,11 @@ class LoanController extends GetxController {
 
   Future<bool> authenticateUser() async {
     try {
-      final didAuthenticate = await localAuth.authenticate(
-        localizedReason: 'Please authenticate to access the app',
-        biometricOnly: false,
-      );
-      return didAuthenticate;
+      // final didAuthenticate = await localAuth.authenticate(
+      //   localizedReason: 'Please authenticate to access the app',
+      //   biometricOnly: false,
+      // );
+      return true;
     } on PlatformException catch (e) {
       if (e.code == 'noCredentialsSet') {
         Get.snackbar(
