@@ -289,6 +289,9 @@ class _LoanDetailsPageState extends State<LoanDetailsPage>
     final loanController = Get.find<LoanController>();
     return loanTotalAmount -
         loanController.paidList
+            .where(
+              (paid) => paid.paidType != PaidType.debit,
+            )
             .map(
               (element) => element.amount,
             )
